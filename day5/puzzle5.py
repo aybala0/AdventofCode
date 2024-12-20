@@ -50,18 +50,32 @@ class Linkedlist:
             newnode = newnode.next
 
         return save
+    
+    def linked_to_arr(self):
+      result = []
+      while(self):
+        result.append(self.val)
+        self = self.next
+      return result
+
 
     def add_to_left_of(self, node):
-        if self.prev:
-            self.prev.next = self.next
-        if self.next:
-            self.next.prev = self.prev
+      #take node out of its current place by reconnecting the other ends
+      if node.prev:
+        node.prev.next = node.next
+      if node.next:
+        node.next.prev = node.prev
 
-        if node.prev:
-            node.prev.next = self
-        self.prev = node.prev
-        self.next = node
-        node.prev = self
+      #add it to the left of self
+      node.next = self
+      if self.prev:
+        node.prev = self.prev
+        self.prev.next = node
+        self.prev = node
+      else:
+         self.prev = node
+         node.prev = None
+
 
     def printlist(self):
         traverser = self
@@ -80,25 +94,23 @@ def fix_order(update):
   traverser = linked_list.next
   while traverser is not None:
     head = linked_list
-    linked_list.printlist()
-    while head is not traverser or head is not None:
-      if head.val in pagenos[traverser.val]:
-        traverser.add_to_left_of(head)
-        linked_list.printlist()
-        break
+    while head.val != traverser.val:
+      #print(f"head: {head.val}")
+      if traverser.val in pagenos:
+        if head.val in pagenos[traverser.val]:
+          #print(f"self:{traverser.val} and node: {head.val}")
+          traverser.add_to_left_of(head)
+          
       head = head.next
     traverser = traverser.next
-  linked_list.printlist()
+  return linked_list.linked_to_arr()
          
 
-fix_order([75,97,47,61,53])
-
-"""
 sum = 0
 for update in updates:
-  if iscorrectly_ordered(update):
+  if not iscorrectly_ordered(update):
     new = fix_order(update)
+    print(update, new)
     sum += new[int(len(new)/2)]
 
 print(sum)
-"""
